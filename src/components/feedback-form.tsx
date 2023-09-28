@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
 import { toast } from "react-toastify";
 import Rating from "./rating";
 import useFeedbackStore from "@/store";
@@ -76,13 +75,7 @@ export default function FeedbackForm() {
           <button
             type="submit"
             disabled={store.page_loading}
-            className={twMerge(
-              "border-0 rounded-md w-28 h-10 cursor-pointer hover:bg-indigo-500",
-              store.page_loading
-                ? "bg-[#ccc] text-gray-800"
-                : "bg-indigo-600 text-white"
-            )}
-          >
+            className="" >
             Send
           </button>
         </div>

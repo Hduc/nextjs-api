@@ -64,8 +64,9 @@ export async function apiFetchFeedbacks(
   page: number,
   limit: number
 ): Promise<Feedback[]> {
+  const obj:any ={ page: page, limit: limit }
   const response = await fetch(
-    `${SERVER_ENDPOINT}/api/feedbacks?page=${page}&limit=${limit}`
+    `${SERVER_ENDPOINT}/api/test?` + new URLSearchParams(obj)
   );
 
   return handleResponse<FeedbackListResponse>(response).then(

@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-export async function GET(request: NextRequest) {
+import type { NextApiRequest, NextApiResponse } from 'next'
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const page_str = request.nextUrl.searchParams.get("page");
-    const limit_str = request.nextUrl.searchParams.get("limit");
+    const page_str = req.query.page +'' // .nextUrl.searchParams.get("page");
+    const limit_str = req.query.limit   +'' //.nextUrl.searchParams.get("limit");
 
     const page = page_str ? parseInt(page_str, 10) : 1;
     const limit = limit_str ? parseInt(limit_str, 10) : 10;
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       results: feedbacks.length,
       feedbacks,
     };
-    return NextResponse.json(json_response);
+    return res.json(json_response);
   } catch (error: any) {
     let error_response = {
       status: "error",

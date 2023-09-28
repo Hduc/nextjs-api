@@ -27,10 +27,10 @@ const FeedbackList: React.FC = () => {
 
   useEffect(() => {
     fetchFeedbacks();
-    window.addEventListener("focus", fetchFeedbacks);
-    return () => {
-      window.removeEventListener("focus", fetchFeedbacks);
-    };
+    // window.addEventListener("focus", fetchFeedbacks);
+    // return () => {
+    //   window.removeEventListener("focus", fetchFeedbacks);
+    // };
   }, []);
 
   return (
