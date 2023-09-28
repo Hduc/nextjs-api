@@ -6,11 +6,6 @@ generator client {
 }
 // sqlite
 datasource db {
-  provider = "sqlite"   //sqlserver 
-  url      = env("DATABASE_URL")
-}
-
-datasource db {
   provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
