@@ -1,30 +1,69 @@
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
-import type { NextApiRequest, NextApiResponse } from 'next'
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+import { NextResponse } from "next/server";
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const id = params.id;
+  const feedback = await prisma.feedback.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!feedback) {
+    let error_response = {
+      status: "fail",
+      message: "No Feedback with the Provided ID Found",
+    };
+    return new NextResponse(JSON.stringify(error_response), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  let json_response = {
+    status: "success",
+    data: {
+      feedback,
+    },
+  };
+  return NextResponse.json(json_response);
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const page_str = req.query.page +'' // .nextUrl.searchParams.get("page");
-    const limit_str = req.query.limit   +'' //.nextUrl.searchParams.get("limit");
+    const id = params.id;
+    let json = await request.json();
 
-    const page = page_str ? parseInt(page_str, 10) : 1;
-    const limit = limit_str ? parseInt(limit_str, 10) : 10;
-    const skip = (page - 1) * limit;
-
-    const feedbacks = await prisma.feedback.findMany({
-      skip,
-      take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
+    const updated_feedback = await prisma.feedback.update({
+      where: { id },
+      data: json,
     });
 
     let json_response = {
       status: "success",
-      results: feedbacks.length,
-      feedbacks,
+      data: {
+        feedback: updated_feedback,
+      },
     };
-    return res.json(json_response);
+    return NextResponse.json(json_response);
   } catch (error: any) {
+    if (error.code === "P2025") {
+      let error_response = {
+        status: "fail",
+        message: "No Feedback with the Provided ID Found",
+      };
+      return new NextResponse(JSON.stringify(error_response), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     let error_response = {
       status: "error",
       message: error.message,
@@ -36,32 +75,25 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export async function POST(request: Request) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const json = await request.json();
-
-    const feedback = await prisma.feedback.create({
-      data: json,
+    const id = params.id;
+    await prisma.feedback.delete({
+      where: { id },
     });
 
-    let json_response = {
-      status: "success",
-      data: {
-        feedback,
-      },
-    };
-    return new NextResponse(JSON.stringify(json_response), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new NextResponse(null, { status: 204 });
   } catch (error: any) {
-    if (error.code === "P2002") {
+    if (error.code === "P2025") {
       let error_response = {
         status: "fail",
-        message: "Feedback with title already exists",
+        message: "No Feedback with the Provided ID Found",
       };
       return new NextResponse(JSON.stringify(error_response), {
-        status: 409,
+        status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }

@@ -1,22 +1,26 @@
-import FeedbackComponents from "@/components/feedback-components";
+import TestComponent from "@/components/test";
 import { PrismaClient } from "@prisma/client";
 
 export default function Home(props:any) {
-  console.log(props)
-  return <FeedbackComponents />;
+
+  return <div>
+    Tesst
+    <TestComponent />
+  </div>;
 }
 
 
 export async function getStaticProps() {
   debugger
   const prisma = new PrismaClient();
-  const feedbacks = await prisma.feedback.findMany({
-    skip:1,
-    take: 50,
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const feedbacks = [1,2,3,4,5,6]
+  // await prisma.feedback.findMany({
+  //   skip:0,
+  //   take: 50,
+  //   orderBy: {
+  //     createdAt: "desc",
+  //   },
+  // });
 
   return {
     props: {
